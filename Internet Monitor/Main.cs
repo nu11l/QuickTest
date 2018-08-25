@@ -51,8 +51,8 @@ namespace Internet_Monitor
             TrayIcon.ShowBalloonTip(500, "Calculating Speed", "...", ToolTipIcon.Info);
             connection connection_status = await return_speed();
             string BalloonTipText = connection_status.result.ToString() + " kb/s\n" +
-                                                                        (connection_status.result * 0.008).ToString() + " mb/s (megabits)\n" +
-                                                                        ((connection_status.result * 0.008) * 0.125).ToString() + " mb/s (megabytes)";
+                                                                        Math.Round((connection_status.result * 0.008), 2).ToString() + " mb/s (megabits)\n" +
+                                                                        Math.Round(((connection_status.result * 0.008) * 0.125), 2).ToString() + " mb/s (megabytes)";
             if (connection_status.speedtest_timeout)
             {
                 Console.WriteLine("Timeout");
@@ -93,7 +93,7 @@ namespace Internet_Monitor
             {
                 double time_elapsed = (DateTime.Now - begin).TotalSeconds;
                 double current_speed = e_param.BytesReceived / 1024 / time_elapsed;
-                TrayIcon.ShowBalloonTip(5, "Calculating Speed", current_speed.ToString() + "kb/s", ToolTipIcon.Info);
+                TrayIcon.ShowBalloonTip(5, "Calculating Speed", Math.Round(current_speed, 2).ToString() + "kb/s (" + e_param.ProgressPercentage + "%)", ToolTipIcon.Info);
                 //TrayIcon.Text = Math.Round(current_speed, 2).ToString() + "kb/s";
                 
                 if (e_param.ProgressPercentage <= 40 && ((DateTime.Now - begin).TotalSeconds) >= 13)
