@@ -93,7 +93,7 @@ namespace Internet_Monitor
             {
                 double time_elapsed = (DateTime.Now - begin).TotalSeconds;
                 double current_speed = e_param.BytesReceived / 1024 / time_elapsed;
-                //TrayIcon.ShowBalloonTip(0, "Calculating Speed", current_speed.ToString() + "kb/s", ToolTipIcon.Info);
+                TrayIcon.ShowBalloonTip(5, "Calculating Speed", current_speed.ToString() + "kb/s", ToolTipIcon.Info);
                 //TrayIcon.Text = Math.Round(current_speed, 2).ToString() + "kb/s";
                 
                 if (e_param.ProgressPercentage <= 40 && ((DateTime.Now - begin).TotalSeconds) >= 13)
