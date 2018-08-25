@@ -16,6 +16,7 @@ namespace Internet_Monitor
     {
         ContextMenu contextMenu;
         MenuItem TestSpeed_Item;
+        MenuItem CloseForm_Item;
 
         public DateTime begin, end;
 
@@ -27,9 +28,11 @@ namespace Internet_Monitor
 
             contextMenu = new ContextMenu();
             TestSpeed_Item = new MenuItem("Test Speed", new System.EventHandler(TestSpeedItem_Click));
-            TestSpeed_Item.Text = "Test Speed";
+            
+            CloseForm_Item = new MenuItem("Exit", new System.EventHandler(CloseFormItem_Click));
 
             contextMenu.MenuItems.Add(0, TestSpeed_Item);
+            contextMenu.MenuItems.Add(1, CloseForm_Item);
             TrayIcon.ContextMenu = contextMenu;
 
         }
@@ -46,9 +49,14 @@ namespace Internet_Monitor
             
         }
 
+        private void CloseFormItem_Click(Object sender, System.EventArgs e)
+        {
+            this.Close();
+        }
+
         private async void TestSpeedItem_Click(Object sender, System.EventArgs e)
         {
-            TrayIcon.ShowBalloonTip(500, "Calculating Speed", "...", ToolTipIcon.Info);
+            TrayIcon.ShowBalloonTip(500, "Calculating Speed", "...", ToolTipIcon.None);
             connection connection_status = await return_speed();
             string BalloonTipText = connection_status.result.ToString() + " kb/s\n" +
                                                                         Math.Round((connection_status.result * 0.008), 2).ToString() + " mb/s (megabits)\n" +
@@ -56,11 +64,11 @@ namespace Internet_Monitor
             if (connection_status.speedtest_timeout)
             {
                 Console.WriteLine("Timeout");
-                TrayIcon.ShowBalloonTip(1000, "Connection Timeout (Slow Internet)", BalloonTipText, ToolTipIcon.Info);
+                TrayIcon.ShowBalloonTip(1000, "Connection Timeout (Slow Internet)", BalloonTipText, ToolTipIcon.None);
             }else
             {
                 Console.WriteLine("Success");
-                TrayIcon.ShowBalloonTip(1000, "Finished!", BalloonTipText, ToolTipIcon.Info);
+                TrayIcon.ShowBalloonTip(1000, "Finished!", BalloonTipText, ToolTipIcon.None);
             }
             
         }
@@ -93,9 +101,13 @@ namespace Internet_Monitor
             {
                 double time_elapsed = (DateTime.Now - begin).TotalSeconds;
                 double current_speed = e_param.BytesReceived / 1024 / time_elapsed;
-                TrayIcon.ShowBalloonTip(5, "Calculating Speed", Math.Round(current_speed, 2).ToString() + "kb/s (" + e_param.ProgressPercentage + "%)", ToolTipIcon.Info);
-                //TrayIcon.Text = Math.Round(current_speed, 2).ToString() + "kb/s";
+                /*if(e_param.ProgressPercentage % 5 == 0)
+                {
+                    TrayIcon.ShowBalloonTip(500, "Calculating Speed", Math.Round(current_speed, 2).ToString() + "kb/s (" + e_param.ProgressPercentage + "%)", ToolTipIcon.None);
+                }*/
                 
+                TrayIcon.Text = Math.Round(current_speed, 2).ToString() + "kb/s (" + e_param.ProgressPercentage + "%)";
+
                 if (e_param.ProgressPercentage <= 40 && ((DateTime.Now - begin).TotalSeconds) >= 13)
                 {
                     final_value = Math.Round(current_speed, 2);
