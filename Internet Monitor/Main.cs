@@ -70,6 +70,7 @@ namespace Internet_Monitor
                 Console.WriteLine("Success");
                 TrayIcon.ShowBalloonTip(1000, "Finished!", BalloonTipText, ToolTipIcon.None);
             }
+            TrayIcon.Text = "Connection Monitor";
             
         }
 
